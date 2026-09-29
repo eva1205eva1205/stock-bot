@@ -2,9 +2,10 @@ name: Daily Stock Report
 
 on:
   schedule:
-    # 設定在週一到週五的台灣時間下午 15:30 執行 (UTC 07:30)
+    # 台灣時間週一到週五下午 15:30 執行 (對應 UTC 07:30)
     - cron: '30 7 * * 1-5'
   
+  # 讓妳可以隨時手動按按鈕測試
   workflow_dispatch:
 
 jobs:
