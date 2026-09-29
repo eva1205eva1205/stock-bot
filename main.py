@@ -33,30 +33,27 @@ for ticker in stock_list:
 
 df_result = pd.DataFrame(data_results)
 
-# 3. 準備美美的 HTML 表格
+# 3. 轉成乾淨的 HTML 表格
 if not df_result.empty:
     df_result['最新收盤價'] = df_result['最新收盤價'].map('{:.2f}'.format)
     df_result['60日均線(MA60)'] = df_result['60日均線(MA60)'].map('{:.2f}'.format)
-
-def highlight_status(val):
-    return 'background-color: #d4edda; color: #155724;' if '大於' in str(val) else 'background-color: #f8d7da; color: #721c24;'
-
-if not df_result.empty:
-    styled_html = df_result.style.applymap(highlight_status, subset=['狀態']).to_html()
-    html_content = f"<h3>📊 每日股市智慧篩選報告</h3>{styled_html}"
+    
+    # 轉為 HTML 表格語法
+    table_html = df_result.to_html(index=False, border=1, justify='center')
+    html_content = f"<h3>📊 每日股市智慧篩選報告</h3>{table_html}"
 else:
     html_content = "<h3>今日無資料</h3>"
 
-# 4. 寄送信件設定 (從 GitHub 秘密保險箱抓取帳號密碼，絕對安全)
+# 4. 寄送信件設定
 sender_email = os.environ.get('GMAIL_USER')
 app_password = os.environ.get('GMAIL_PASS')
-receiver_email = sender_email # 寄給自己
+receiver_email = sender_email
 
 msg = MIMEMultipart()
 msg['From'] = sender_email
 msg['To'] = receiver_email
 msg['Subject'] = "📊 每日股市智慧篩選報告"
-msg.attach(MIMEText(html_content, 'html'))
+msg.attach(MIMEText(html_content, 'html', 'utf-8'))
 
 # 5. 執行自動寄信
 try:
